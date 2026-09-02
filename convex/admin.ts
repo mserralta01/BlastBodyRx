@@ -1,16 +1,16 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { requireTrimPathAdmin } from "./lib/auth";
+import { requireVirtualFitPathAdmin } from "./lib/auth";
 
-export const customers = query({ args: {}, handler: async (ctx) => { await requireTrimPathAdmin(ctx); return ctx.db.query("customers").collect(); } });
-export const discounts = query({ args: {}, handler: async (ctx) => { await requireTrimPathAdmin(ctx); return ctx.db.query("discounts").collect(); } });
-export const batches = query({ args: {}, handler: async (ctx) => { await requireTrimPathAdmin(ctx); return ctx.db.query("batches").collect(); } });
-export const settings = query({ args: {}, handler: async (ctx) => { await requireTrimPathAdmin(ctx); return ctx.db.query("storeSettings").withIndex("by_singleton", (q) => q.eq("singleton", "main")).unique(); } });
+export const customers = query({ args: {}, handler: async (ctx) => { await requireVirtualFitPathAdmin(ctx); return ctx.db.query("customers").collect(); } });
+export const discounts = query({ args: {}, handler: async (ctx) => { await requireVirtualFitPathAdmin(ctx); return ctx.db.query("discounts").collect(); } });
+export const batches = query({ args: {}, handler: async (ctx) => { await requireVirtualFitPathAdmin(ctx); return ctx.db.query("batches").collect(); } });
+export const settings = query({ args: {}, handler: async (ctx) => { await requireVirtualFitPathAdmin(ctx); return ctx.db.query("storeSettings").withIndex("by_singleton", (q) => q.eq("singleton", "main")).unique(); } });
 
 export const createDiscount = mutation({
   args: { code: v.string(), type: v.union(v.literal("percent"), v.literal("fixed")), amount: v.number() },
   handler: async (ctx, args) => {
-    await requireTrimPathAdmin(ctx);
+    await requireVirtualFitPathAdmin(ctx);
     return ctx.db.insert("discounts", { code: args.code.toUpperCase(), type: args.type, amount: args.amount, active: true, usageCount: 0, startsAt: Date.now() });
   },
 });
@@ -18,7 +18,7 @@ export const createDiscount = mutation({
 export const saveSettings = mutation({
   args: { storeName: v.string(), supportEmail: v.string(), freeShippingThreshold: v.number(), minimumOrder: v.number(), checkoutEnabled: v.boolean(), announcement: v.string() },
   handler: async (ctx, args) => {
-    await requireTrimPathAdmin(ctx);
+    await requireVirtualFitPathAdmin(ctx);
     const current = await ctx.db.query("storeSettings").withIndex("by_singleton", (q) => q.eq("singleton", "main")).unique();
     if (current) return ctx.db.patch(current._id, { ...args, updatedAt: Date.now() });
     return ctx.db.insert("storeSettings", { singleton: "main", ...args, updatedAt: Date.now() });

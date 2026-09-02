@@ -75,7 +75,9 @@ export default defineSchema({
   storeSettings: defineTable({
     singleton: v.string(),
     storeName: v.string(),
-    supportEmail: v.string(),
+    supportEmail: v.optional(v.string()),
+    supportPhone: v.optional(v.string()),
+    legalName: v.optional(v.string()),
     freeShippingThreshold: v.number(),
     minimumOrder: v.number(),
     checkoutEnabled: v.boolean(),

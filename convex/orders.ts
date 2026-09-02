@@ -1,11 +1,11 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { requireTrimPathAdmin } from "./lib/auth";
+import { requireVirtualFitPathAdmin } from "./lib/auth";
 
 const itemValidator = v.object({ sku: v.string(), name: v.string(), strength: v.string(), quantity: v.number(), unitPrice: v.number() });
 
 export const list = query({ args: {}, handler: async (ctx) => {
-  await requireTrimPathAdmin(ctx);
+  await requireVirtualFitPathAdmin(ctx);
   return (await ctx.db.query("orders").collect()).sort((a, b) => b.createdAt - a.createdAt);
 } });
 
@@ -30,7 +30,7 @@ export const createDraft = mutation({
       }
     }
     const now = Date.now();
-    const orderNumber = `TP-${new Date(now).toISOString().slice(2, 10).replaceAll("-", "")}-${String(now).slice(-5)}`;
+    const orderNumber = `VFP-${new Date(now).toISOString().slice(2, 10).replaceAll("-", "")}-${String(now).slice(-5)}`;
     const total = Math.round((subtotal - discount) * 100) / 100;
     const customer = await ctx.db.query("customers").withIndex("by_email", (q) => q.eq("email", args.email.toLowerCase())).unique();
     if (!customer) {
@@ -48,7 +48,7 @@ export const createDraft = mutation({
 export const updateStatus = mutation({
   args: { orderId: v.id("orders"), status: v.union(v.literal("draft"), v.literal("pending"), v.literal("paid"), v.literal("fulfilled"), v.literal("cancelled"), v.literal("refunded")) },
   handler: async (ctx, args) => {
-    await requireTrimPathAdmin(ctx);
+    await requireVirtualFitPathAdmin(ctx);
     return ctx.db.patch(args.orderId, { status: args.status, updatedAt: Date.now() });
   },
 });

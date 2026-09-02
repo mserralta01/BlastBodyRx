@@ -1,6 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { requireTrimPathAdmin } from "./lib/auth";
+import { requireVirtualFitPathAdmin } from "./lib/auth";
 
 export const list = query({
   args: {},
@@ -10,7 +10,7 @@ export const list = query({
 export const updateInventory = mutation({
   args: { productId: v.id("products"), sku: v.string(), inventory: v.number() },
   handler: async (ctx, args) => {
-    await requireTrimPathAdmin(ctx);
+    await requireVirtualFitPathAdmin(ctx);
     const product = await ctx.db.get(args.productId);
     if (!product) throw new Error("Product not found");
     await ctx.db.patch(args.productId, {
@@ -23,7 +23,7 @@ export const updateInventory = mutation({
 export const toggleActive = mutation({
   args: { productId: v.id("products"), active: v.boolean() },
   handler: async (ctx, args) => {
-    await requireTrimPathAdmin(ctx);
+    await requireVirtualFitPathAdmin(ctx);
     return ctx.db.patch(args.productId, { active: args.active, updatedAt: Date.now() });
   },
 });

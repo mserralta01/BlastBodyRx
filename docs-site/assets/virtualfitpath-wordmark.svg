@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 128" role="img" aria-labelledby="title desc">
+  <title id="title">VirtualFitPath</title>
+  <desc id="desc">A geometric VFP pathway mark beside the VirtualFitPath wordmark</desc>
+  <g transform="translate(8 9)">
+    <path d="M3 8h22l31 69 26-69h23L57 111Z" fill="#070b12"/>
+    <path d="M44 8h74L103 29H61L52 48h42L80 68H43L26 104H3Z" fill="#1476e8"/>
+    <path d="M102 8h34c24 0 38 11 38 30 0 17-12 29-33 32l-24 4-13 30H79l23-51h31c10 0 16-5 16-13 0-7-6-11-16-11H93Z" fill="#070b12"/>
+    <path d="M104 75l-27 29h39l10-22-13 3 7-9-11 3 7-9Z" fill="#1476e8"/>
+  </g>
+  <text x="205" y="87" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="69" font-weight="900" letter-spacing="-4">
+    <tspan fill="#070b12">Virtual</tspan><tspan fill="#1476e8">Fit</tspan><tspan fill="#070b12">Path</tspan>
+  </text>
+</svg>

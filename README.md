@@ -1,6 +1,9 @@
-# Trim Path Rx
+# VirtualFitPath
 
-Trim Path Rx is a responsive ecommerce storefront and protected operations back office for research compounds. The application recreates the established Trim Path Rx visual system, adds a safer checkout flow, and includes catalogue, inventory, order, customer, discount, batch-certificate, and store-setting management.
+VirtualFitPath is a responsive ecommerce storefront and protected operations back office for research compounds. The application uses the VirtualFitPath visual system, adds a safer checkout flow, and includes catalogue, inventory, order, customer, discount, batch-certificate, and store-setting management.
+
+Customer support: `800-637-9046`
+Legal entity: `Virtual Fit Path, LLC`
 
 ## Local development
 
@@ -8,7 +11,7 @@ Trim Path Rx is a responsive ecommerce storefront and protected operations back 
 2. Install dependencies with `npm install`.
 3. Start the app with `npm run dev`.
 
-Production checkout intentionally stays disabled until both the payment credentials and `NEXT_PUBLIC_CHECKOUT_ENABLED=true` are configured. Back-office accounts, sessions, and authorization are managed independently inside the Trim Path Rx Convex deployment.
+Production checkout intentionally stays disabled until both the payment credentials and `NEXT_PUBLIC_CHECKOUT_ENABLED=true` are configured. Back-office accounts, sessions, and authorization are managed independently inside the VirtualFitPath Convex deployment.
 
 ## Validation
 

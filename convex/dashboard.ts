@@ -1,10 +1,10 @@
 import { query } from "./_generated/server";
-import { requireTrimPathAdmin } from "./lib/auth";
+import { requireVirtualFitPathAdmin } from "./lib/auth";
 
 export const overview = query({
   args: {},
   handler: async (ctx) => {
-    await requireTrimPathAdmin(ctx);
+    await requireVirtualFitPathAdmin(ctx);
     const [products, orders, customers] = await Promise.all([
       ctx.db.query("products").collect(),
       ctx.db.query("orders").collect(),

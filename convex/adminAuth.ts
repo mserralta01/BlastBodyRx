@@ -35,8 +35,8 @@ export const claimOwner = mutation({
     if (!userId) throw new Error("Sign in before claiming owner access");
     const existingAdmin = await ctx.db.query("adminUsers").withIndex("by_user", (q) => q.eq("userId", userId)).unique();
     if (existingAdmin) return { claimed: false, alreadyAdmin: true };
-    if (await ctx.db.query("adminUsers").first()) throw new Error("The Trim Path Rx owner account has already been created");
-    const expected = process.env.TRIM_PATH_RX_ADMIN_SETUP_CODE;
+    if (await ctx.db.query("adminUsers").first()) throw new Error("The VirtualFitPath owner account has already been created");
+    const expected = process.env.VIRTUAL_FIT_PATH_ADMIN_SETUP_CODE;
     if (!expected || args.setupCode.trim() !== expected) throw new Error("The owner setup code is not valid");
     await ctx.db.insert("adminUsers", { userId, role: "owner", createdAt: Date.now() });
     return { claimed: true, alreadyAdmin: false };

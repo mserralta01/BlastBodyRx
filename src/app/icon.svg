@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="VirtualFitPath">
+  <rect width="128" height="128" rx="26" fill="#ffffff"/>
+  <path d="M12 17h22l30 67 25-67h24L65 116Z" fill="#070b12"/>
+  <path d="M47 17h69L101 39H65L57 55h35L78 76H48L29 111H7Z" fill="#1476e8"/>
+  <path d="M96 75l-25 36h37l10-22-13 3 7-9-11 3 7-9Z" fill="#1476e8"/>
+</svg>

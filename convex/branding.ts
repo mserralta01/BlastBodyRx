@@ -1,12 +1,12 @@
 import { mutation } from "./_generated/server";
 
-const newSku = (sku: string) => sku.startsWith("AX-") ? `TP-${sku.slice(3)}` : sku;
+const newSku = (sku: string) => sku.startsWith("AX-") || sku.startsWith("TP-") ? `VFP-${sku.slice(3)}` : sku;
 
 /**
- * Idempotent production data alignment for the approved Trim Path Rx rebrand.
+ * Idempotent production data alignment for the approved VirtualFitPath rebrand.
  * It only updates brand-owned catalogue fields and SKU labels.
  */
-export const applyTrimPathRx = mutation({
+export const applyVirtualFitPath = mutation({
   args: {},
   handler: async (ctx) => {
     const now = Date.now();
@@ -19,10 +19,10 @@ export const applyTrimPathRx = mutation({
     ]);
 
     for (const product of products) {
-      const needsUpdate = product.image !== "/assets/products/trimpath-vial.svg" || product.variants.some((variant) => variant.sku.startsWith("AX-"));
+      const needsUpdate = product.image !== "/assets/products/virtualfitpath-vial.svg" || product.variants.some((variant) => variant.sku.startsWith("AX-") || variant.sku.startsWith("TP-"));
       if (!needsUpdate) continue;
       await ctx.db.patch(product._id, {
-        image: "/assets/products/trimpath-vial.svg",
+        image: "/assets/products/virtualfitpath-vial.svg",
         variants: product.variants.map((variant) => ({ ...variant, sku: newSku(variant.sku) })),
         updatedAt: now,
       });
@@ -30,7 +30,7 @@ export const applyTrimPathRx = mutation({
     }
 
     for (const order of orders) {
-      if (!order.items.some((item) => item.sku.startsWith("AX-"))) continue;
+      if (!order.items.some((item) => item.sku.startsWith("AX-") || item.sku.startsWith("TP-"))) continue;
       await ctx.db.patch(order._id, {
         items: order.items.map((item) => ({ ...item, sku: newSku(item.sku) })),
         updatedAt: now,
@@ -38,11 +38,18 @@ export const applyTrimPathRx = mutation({
       updatedOrders += 1;
     }
 
-    const updatedSettings = Boolean(settings && (settings.storeName !== "Trim Path Rx" || settings.supportEmail !== "support@trimpathrx.com"));
+    const updatedSettings = Boolean(settings && (
+      settings.storeName !== "VirtualFitPath" ||
+      settings.legalName !== "Virtual Fit Path, LLC" ||
+      settings.supportPhone !== "800-637-9046" ||
+      settings.supportEmail
+    ));
     if (settings && updatedSettings) {
       await ctx.db.patch(settings._id, {
-        storeName: "Trim Path Rx",
-        supportEmail: "support@trimpathrx.com",
+        storeName: "VirtualFitPath",
+        legalName: "Virtual Fit Path, LLC",
+        supportPhone: "800-637-9046",
+        supportEmail: undefined,
         updatedAt: now,
       });
     }

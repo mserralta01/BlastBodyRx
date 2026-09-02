@@ -6,7 +6,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { Menu, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import type { Product, Variant } from "@/lib/catalog";
 import { money } from "@/lib/catalog";
-import { TrimPathVial } from "@/components/trimpath-vial";
+import { VirtualFitPathVial } from "@/components/virtualfitpath-vial";
 
 export type CartItem = { slug: string; name: string; image: string; variant: Variant; quantity: number };
 
@@ -36,7 +36,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
       try {
-        const saved = window.localStorage.getItem("trimpath-cart");
+        const saved = window.localStorage.getItem("virtualfitpath-cart");
         if (saved) setItems(JSON.parse(saved));
       } catch { /* Ignore invalid local cart data. */ }
       setHydrated(true);
@@ -45,7 +45,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (hydrated) window.localStorage.setItem("trimpath-cart", JSON.stringify(items));
+    if (hydrated) window.localStorage.setItem("virtualfitpath-cart", JSON.stringify(items));
   }, [hydrated, items]);
 
   const add = useCallback((product: Product, variant = product.variants[0]) => {
@@ -86,7 +86,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             <div className="empty-cart"><ShoppingBag size={34} /><h3>Your cart is ready for research.</h3><p>Add compounds from the catalogue to begin.</p><Link href="/shop" className="button button--primary" onClick={() => setDrawerOpen(false)}>Explore catalogue</Link></div>
           ) : items.map((item) => (
             <article className="cart-line" key={item.variant.sku}>
-              <TrimPathVial name={item.name} strength={item.variant.strength} />
+              <VirtualFitPathVial name={item.name} strength={item.variant.strength} />
               <div><strong>{item.name}</strong><span>{item.variant.strength} · {item.variant.sku}</span><div className="quantity"><button onClick={() => update(item.variant.sku, item.quantity - 1)} aria-label={`Remove one ${item.name}`}><Minus size={14} /></button><span>{item.quantity}</span><button onClick={() => update(item.variant.sku, item.quantity + 1)} aria-label={`Add one ${item.name}`}><Plus size={14} /></button></div></div>
               <strong>{money(item.variant.price * item.quantity)}</strong>
             </article>
@@ -106,7 +106,7 @@ export function Header() {
     <div className="announcement">Free U.S. shipping on qualifying $100+ research orders</div>
     <div className="research-strip">Research compounds · Documentation first <Link href="/official">Verify official site</Link></div>
     <header className="site-header"><div className="site-header__inner">
-      <Link href="/" aria-label="Trim Path Rx home"><Image className="brand" src="/assets/brand/trimpath-wordmark.svg" width={184} height={45} alt="TrimPath" priority /></Link>
+      <Link href="/" aria-label="VirtualFitPath home"><Image className="brand" src="/assets/brand/virtualfitpath-wordmark.svg" width={234} height={38} alt="VirtualFitPath" priority /></Link>
       <nav className={`primary-nav ${mobileOpen ? "is-open" : ""}`} aria-label="Primary navigation">{links.map(([label, href]) => <Link key={href} href={href} onClick={() => setMobileOpen(false)}>{label}</Link>)}</nav>
       <div className="header-actions"><button className="icon-button mobile-toggle" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Open navigation">{mobileOpen ? <X size={20} /> : <Menu size={20} />}</button><button className="icon-button cart-button" onClick={open} aria-label={`Open cart with ${count} items`}><ShoppingBag size={19} /><span>{count}</span></button></div>
     </div></header>
@@ -116,9 +116,9 @@ export function Header() {
 export function Footer() {
   return <footer className="site-footer">
     <div className="container footer-promises"><div><strong>Documented batches</strong><span>COAs organized by compound and lot</span></div><div><strong>U.S. shipping</strong><span>Free on qualifying $100+ orders</span></div><div><strong>Research use only</strong><span>Not for human or animal consumption</span></div></div>
-    <div className="container footer-grid"><div><Image src="/assets/brand/trimpath-wordmark.svg" width={190} height={48} alt="TrimPath" /><p>Research compounds presented with clear documentation, consistent labeling, and transparent batch records.</p><a href="mailto:support@trimpathrx.com">support@trimpathrx.com</a></div><div><h3>Research</h3><Link href="/research">Research gateway</Link><Link href="/research-standards">Standards</Link><Link href="/shop">Catalogue</Link><Link href="/lab-results">Lab results</Link></div><div><h3>Customer care</h3><Link href="/shop">Shop</Link><Link href="/shipping">Shipping</Link><Link href="/track-order">Track order</Link><Link href="/contact">Contact</Link></div><div><h3>Company</h3><Link href="/about">About</Link><Link href="/faq">FAQ</Link><Link href="/official">Official site</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link></div></div>
+    <div className="container footer-grid"><div><Image src="/assets/brand/virtualfitpath-wordmark.svg" width={234} height={38} alt="VirtualFitPath" /><p>Research compounds presented with clear documentation, consistent labeling, and transparent batch records.</p><a href="tel:+18006379046">800-637-9046</a></div><div><h3>Research</h3><Link href="/research">Research gateway</Link><Link href="/research-standards">Standards</Link><Link href="/shop">Catalogue</Link><Link href="/lab-results">Lab results</Link></div><div><h3>Customer care</h3><Link href="/shop">Shop</Link><Link href="/shipping">Shipping</Link><Link href="/track-order">Track order</Link><Link href="/contact">Contact</Link></div><div><h3>Company</h3><Link href="/about">About</Link><Link href="/faq">FAQ</Link><Link href="/official">Official site</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms &amp; Conditions</Link></div></div>
     <div className="research-disclaimer"><strong>For Research Use Only.</strong> Products displayed on this website are intended strictly for laboratory research. They are not for human or animal consumption, therapeutic use, diagnostic use, or household use.</div>
-    <div className="copyright">© 2026 Trim Path Rx Research.</div>
+    <div className="copyright">© 2026 Virtual Fit Path, LLC. All rights reserved.</div>
   </footer>;
 }
 

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 128" role="img" aria-labelledby="title desc">
+  <title id="title">BlastBodyRx</title>
+  <desc id="desc">Angular BBRx burst mark beside the BlastBodyRx wordmark</desc>
+  <g transform="translate(10 10)"><rect width="108" height="108" rx="28" fill="#111712"/><path d="M21 24h28c22 0 35 9 35 26 0 10-5 18-15 23 14 4 21 13 21 27 0 20-15 30-42 30H21V24Zm22 18v22h7c8 0 12-4 12-11s-4-11-12-11h-7Zm0 39v27h9c10 0 15-5 15-14 0-9-5-13-15-13h-9Z" fill="#f7f3e8"/><path d="M72 17h23L83 43h19L65 98l9-37H56Z" fill="#87d92f"/><circle cx="91" cy="92" r="8" fill="#27d4df"/></g>
+  <text x="148" y="87" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="70" font-weight="900" letter-spacing="-4"><tspan fill="#111712">BlastBody</tspan><tspan fill="#078c9a">Rx</tspan></text>
+</svg>

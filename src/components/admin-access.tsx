@@ -12,7 +12,7 @@ import { AdminDashboard } from "@/components/admin-dashboard";
 
 export function AdminAccess() {
   return <>
-    <AuthLoading><AdminAuthShell><div className="admin-auth-loading">Checking your VirtualFitPath session…</div></AdminAuthShell></AuthLoading>
+    <AuthLoading><AdminAuthShell><div className="admin-auth-loading">Checking your BlastBodyRx session…</div></AdminAuthShell></AuthLoading>
     <Unauthenticated><AdminSignIn /></Unauthenticated>
     <Authenticated><AdminGate /></Authenticated>
   </>;
@@ -26,7 +26,7 @@ function AdminGate() {
   const [notice, setNotice] = useState("");
   const [working, setWorking] = useState(false);
 
-  if (!viewer) return <AdminAuthShell><div className="admin-auth-loading">Loading your VirtualFitPath account…</div></AdminAuthShell>;
+  if (!viewer) return <AdminAuthShell><div className="admin-auth-loading">Loading your BlastBodyRx account…</div></AdminAuthShell>;
   if (viewer.isAdmin) return <AdminDashboard />;
 
   async function claim(event: FormEvent) {
@@ -37,7 +37,7 @@ function AdminGate() {
     finally { setWorking(false); }
   }
 
-  return <AdminAuthShell><div className="admin-auth-card"><ShieldCheck /><span className="admin-auth-kicker">Signed in as {viewer.email}</span><h1>{viewer.hasOwner ? "This account is not authorized." : "Activate the VirtualFitPath owner account."}</h1><p>{viewer.hasOwner ? "Ask the VirtualFitPath owner to grant this account access." : "Enter the one-time owner setup code to protect product, order, and customer data."}</p>{!viewer.hasOwner && <form onSubmit={claim}><label><span>Owner setup code</span><input type="password" value={setupCode} onChange={(event) => setSetupCode(event.target.value)} autoComplete="one-time-code" required /></label>{notice && <div className="admin-auth-error" role="alert">{notice}</div>}<button type="submit" disabled={working || !setupCode}><KeyRound />{working ? "Activating…" : "Activate owner access"}</button></form>}<button className="admin-auth-secondary" onClick={() => void signOut()}>Sign out</button></div></AdminAuthShell>;
+  return <AdminAuthShell><div className="admin-auth-card"><ShieldCheck /><span className="admin-auth-kicker">Signed in as {viewer.email}</span><h1>{viewer.hasOwner ? "This account is not authorized." : "Activate the BlastBodyRx owner account."}</h1><p>{viewer.hasOwner ? "Ask the BlastBodyRx owner to grant this account access." : "Enter the one-time owner setup code to protect product, order, and customer data."}</p>{!viewer.hasOwner && <form onSubmit={claim}><label><span>Owner setup code</span><input type="password" value={setupCode} onChange={(event) => setSetupCode(event.target.value)} autoComplete="one-time-code" required /></label>{notice && <div className="admin-auth-error" role="alert">{notice}</div>}<button type="submit" disabled={working || !setupCode}><KeyRound />{working ? "Activating…" : "Activate owner access"}</button></form>}<button className="admin-auth-secondary" onClick={() => void signOut()}>Sign out</button></div></AdminAuthShell>;
 }
 
 function AdminSignIn() {
@@ -57,9 +57,9 @@ function AdminSignIn() {
     finally { setWorking(false); }
   }
 
-  return <AdminAuthShell><div className="admin-auth-card"><LockKeyhole /><span className="admin-auth-kicker">Independent VirtualFitPath account</span><h1>{flow === "signIn" ? "Sign in to operations." : "Create your VirtualFitPath account."}</h1><p>Manage products, inventory, orders, customers, discounts, certificates, and store settings.</p><form onSubmit={submit}>{flow === "signUp" && <label><span>Name</span><input name="name" autoComplete="name" required /></label>}<label><span>Email address</span><input name="email" type="email" autoComplete="email" required /></label><label><span>Password</span><input name="password" type="password" autoComplete={flow === "signIn" ? "current-password" : "new-password"} minLength={12} required /></label>{flow === "signUp" && <small>Use at least 12 characters with uppercase, lowercase, and a number.</small>}{notice && <div className="admin-auth-error" role="alert">{notice}</div>}<button type="submit" disabled={working}><LockKeyhole />{working ? "Please wait…" : flow === "signIn" ? "Sign in" : "Create account"}</button></form>{(ownerExists === false || flow === "signUp") && <button className="admin-auth-secondary" onClick={() => { setFlow(flow === "signIn" ? "signUp" : "signIn"); setNotice(""); }}>{flow === "signIn" ? "Create the first VirtualFitPath account" : "I already have an account"}</button>}</div></AdminAuthShell>;
+  return <AdminAuthShell><div className="admin-auth-card"><LockKeyhole /><span className="admin-auth-kicker">Independent BlastBodyRx account</span><h1>{flow === "signIn" ? "Sign in to operations." : "Create your BlastBodyRx account."}</h1><p>Manage products, inventory, orders, customers, discounts, certificates, and store settings.</p><form onSubmit={submit}>{flow === "signUp" && <label><span>Name</span><input name="name" autoComplete="name" required /></label>}<label><span>Email address</span><input name="email" type="email" autoComplete="email" required /></label><label><span>Password</span><input name="password" type="password" autoComplete={flow === "signIn" ? "current-password" : "new-password"} minLength={12} required /></label>{flow === "signUp" && <small>Use at least 12 characters with uppercase, lowercase, and a number.</small>}{notice && <div className="admin-auth-error" role="alert">{notice}</div>}<button type="submit" disabled={working}><LockKeyhole />{working ? "Please wait…" : flow === "signIn" ? "Sign in" : "Create account"}</button></form>{(ownerExists === false || flow === "signUp") && <button className="admin-auth-secondary" onClick={() => { setFlow(flow === "signIn" ? "signUp" : "signIn"); setNotice(""); }}>{flow === "signIn" ? "Create the first BlastBodyRx account" : "I already have an account"}</button>}</div></AdminAuthShell>;
 }
 
 function AdminAuthShell({ children }: { children: React.ReactNode }) {
-  return <main className="admin-auth-page"><div className="admin-auth-brand"><Image src="/assets/brand/virtualfitpath-wordmark.svg" alt="VirtualFitPath" width={234} height={38} priority /><span>OPERATIONS</span></div>{children}<Link href="/"><ArrowLeft /> Return to storefront</Link></main>;
+  return <main className="admin-auth-page"><div className="admin-auth-brand"><Image src="/assets/brand/blastbodyrx-wordmark.svg" alt="BlastBodyRx" width={234} height={38} priority /><span>OPERATIONS</span></div>{children}<Link href="/"><ArrowLeft /> Return to storefront</Link></main>;
 }

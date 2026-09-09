@@ -1,22 +1,22 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { requireVirtualFitPathAdmin as requireStoreAdmin } from "./lib/auth";
+import { requireBlastBodyRxAdmin as requireStoreAdmin } from "./lib/auth";
 
 const brand = {
-  storeName: "VirtualFitPath",
-  legalName: "Virtual Fit Path, LLC",
+  storeName: "BlastBodyRx",
+  legalName: "Ecom Blast LLC",
   supportEmail: "",
-  supportPhone: "800-637-9046",
-  logoUrl: "/assets/brand/virtualfitpath-wordmark.svg",
+  supportPhone: "1-888-812-8690",
+  logoUrl: "/assets/brand/blastbodyrx-wordmark.svg",
 };
 
 const defaultDesign = {
   singleton: "main",
-  themeId: "clinical-grid" as const,
-  primaryColor: "#0b1f3a",
-  accentColor: "#2376ff",
-  surfaceColor: "#f4f7fb",
-  textColor: "#101828",
+  themeId: "biofuture" as const,
+  primaryColor: "#078c9a",
+  accentColor: "#87d92f",
+  surfaceColor: "#f7f3e8",
+  textColor: "#111712",
   headingFont: "Manrope",
   bodyFont: "DM Sans",
 };
@@ -57,7 +57,7 @@ export const publicStorefront = query({
       sections: storedSections.length ? storedSections : defaultSections,
       pages,
       shippingMethods: storedShipping.length ? storedShipping : defaultShipping,
-      payment: payment ?? { singleton: "main", provider: "stripe", currency: "USD", enabled: false, statementDescriptor: "VIRTUALFITPATH", checkoutMessage: "Secure card payment" },
+      payment: payment ?? { singleton: "main", provider: "stripe", currency: "USD", enabled: false, statementDescriptor: "BLASTBODYRX", checkoutMessage: "Secure card payment" },
     };
   },
 });

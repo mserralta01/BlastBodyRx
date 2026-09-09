@@ -1,10 +1,10 @@
 import { query } from "./_generated/server";
-import { requireVirtualFitPathAdmin } from "./lib/auth";
+import { requireBlastBodyRxAdmin } from "./lib/auth";
 
 export const overview = query({
   args: {},
   handler: async (ctx) => {
-    await requireVirtualFitPathAdmin(ctx);
+    await requireBlastBodyRxAdmin(ctx);
     const [products, orders, customers] = await Promise.all([
       ctx.db.query("products").take(250),
       ctx.db.query("orders").withIndex("by_created_at").order("desc").take(500),

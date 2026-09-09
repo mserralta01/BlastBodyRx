@@ -1,6 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="VirtualFitPath">
-  <rect width="128" height="128" rx="26" fill="#ffffff"/>
-  <path d="M12 17h22l30 67 25-67h24L65 116Z" fill="#070b12"/>
-  <path d="M47 17h69L101 39H65L57 55h35L78 76H48L29 111H7Z" fill="#1476e8"/>
-  <path d="M96 75l-25 36h37l10-22-13 3 7-9-11 3 7-9Z" fill="#1476e8"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="BlastBodyRx">
+  <rect width="128" height="128" rx="30" fill="#111712"/><path d="M20 24h32c25 0 39 10 39 29 0 11-6 20-17 25 16 4 24 15 24 30 0 23-17 35-47 35H20V24Zm25 20v25h8c9 0 14-4 14-12 0-9-5-13-14-13h-8Zm0 44v30h10c11 0 17-5 17-15 0-10-6-15-17-15H45Z" fill="#f7f3e8"/><path d="M82 17h27L95 47h22L74 110l11-43H64Z" fill="#87d92f"/><circle cx="102" cy="105" r="9" fill="#27d4df"/>
 </svg>

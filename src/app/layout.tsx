@@ -7,7 +7,7 @@ const display = Archivo({ subsets: ["latin"], variable: "--font-display" });
 const body = Manrope({ subsets: ["latin"], variable: "--font-body" });
 
 export const metadata: Metadata = {
-  title: { default: "VirtualFitPath — Research Compounds & Batch Documentation", template: "%s — VirtualFitPath" },
+  title: { default: "BlastBodyRx — Research Compounds & Batch Documentation", template: "%s — BlastBodyRx" },
   description: "Documentation-first research compounds with variant-level labeling and accessible batch certificates.",
 };
 

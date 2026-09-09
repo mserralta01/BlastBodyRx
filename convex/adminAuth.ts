@@ -4,11 +4,20 @@ import { v } from "convex/values";
 
 export const ownerExists = query({
   args: {},
+  returns: v.boolean(),
   handler: async (ctx) => Boolean(await ctx.db.query("adminUsers").first()),
 });
 
 export const viewer = query({
   args: {},
+  returns: v.object({
+    authenticated: v.boolean(),
+    isAdmin: v.boolean(),
+    hasOwner: v.boolean(),
+    email: v.optional(v.string()),
+    name: v.optional(v.string()),
+    role: v.optional(v.union(v.literal("owner"), v.literal("manager"))),
+  }),
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) return { authenticated: false, isAdmin: false, hasOwner: false };
@@ -30,13 +39,14 @@ export const viewer = query({
 
 export const claimOwner = mutation({
   args: { setupCode: v.string() },
+  returns: v.object({ claimed: v.boolean(), alreadyAdmin: v.boolean() }),
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Sign in before claiming owner access");
     const existingAdmin = await ctx.db.query("adminUsers").withIndex("by_user", (q) => q.eq("userId", userId)).unique();
     if (existingAdmin) return { claimed: false, alreadyAdmin: true };
-    if (await ctx.db.query("adminUsers").first()) throw new Error("The VirtualFitPath owner account has already been created");
-    const expected = process.env.VIRTUAL_FIT_PATH_ADMIN_SETUP_CODE;
+    if (await ctx.db.query("adminUsers").first()) throw new Error("The BlastBodyRx owner account has already been created");
+    const expected = process.env.BLASTBODYRX_ADMIN_SETUP_CODE;
     if (!expected || args.setupCode.trim() !== expected) throw new Error("The owner setup code is not valid");
     await ctx.db.insert("adminUsers", { userId, role: "owner", createdAt: Date.now() });
     return { claimed: true, alreadyAdmin: false };

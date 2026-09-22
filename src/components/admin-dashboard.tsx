@@ -7,13 +7,15 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
 import { api } from "../../convex/_generated/api";
 import type { Doc, Id } from "../../convex/_generated/dataModel";
-import { Activity, BadgePercent, Boxes, Brush, ChevronRight, ClipboardCheck, CreditCard, FileText, FlaskConical, LayoutDashboard, Menu, PackageSearch, PanelsTopLeft, Palette, Search, ShoppingCart, Store, Truck, UserRound, Users, X } from "lucide-react";
+import { Activity, BadgePercent, Boxes, Brush, CheckCircle2, ChevronRight, ClipboardCheck, CreditCard, Database, FileText, FlaskConical, LayoutDashboard, Menu, PackageSearch, PanelsTopLeft, Palette, Search, Settings, ShieldCheck, ShoppingCart, Store, Trash2, Truck, UserPlus, UserRound, Users, X } from "lucide-react";
 import { money } from "@/lib/catalog";
 import { BlastBodyRxVial } from "@/components/blastbodyrx-vial";
 import { peptideThemes, type PeptideThemeId } from "@/lib/store-design";
 
-type View = "overview" | "products" | "orders" | "customers" | "designs" | "sections" | "branding" | "pages" | "store" | "shipping" | "payments" | "account" | "discounts" | "batches";
-const nav: Array<[View, string, typeof LayoutDashboard]> = [["overview", "Dashboard", LayoutDashboard], ["orders", "Orders", ShoppingCart], ["products", "Products", Boxes], ["customers", "Customers", Users], ["designs", "Designs", Palette], ["sections", "Page sections", PanelsTopLeft], ["branding", "Branding", Brush], ["pages", "Pages", FileText], ["store", "Store settings", Store], ["shipping", "Shipping", Truck], ["payments", "Payments", CreditCard], ["account", "Account", UserRound], ["discounts", "Discounts", BadgePercent], ["batches", "Batch certificates", FlaskConical]];
+type View = "overview" | "products" | "orders" | "customers" | "designs" | "sections" | "branding" | "pages" | "store" | "shipping" | "discounts" | "batches" | "settings";
+type CommerceView = "designs" | "sections" | "branding" | "pages" | "store" | "shipping" | "payments" | "account";
+const nav: Array<[View, string, typeof LayoutDashboard]> = [["overview", "Dashboard", LayoutDashboard], ["orders", "Orders", ShoppingCart], ["products", "Products", Boxes], ["customers", "Customers", Users], ["designs", "Designs", Palette], ["sections", "Page sections", PanelsTopLeft], ["branding", "Branding", Brush], ["pages", "Pages", FileText], ["store", "Store settings", Store], ["shipping", "Shipping", Truck], ["discounts", "Discounts", BadgePercent], ["batches", "Batch certificates", FlaskConical], ["settings", "Settings", Settings]];
+const commerceLabels: Record<CommerceView, string> = { designs: "Designs", sections: "Page sections", branding: "Branding", pages: "Pages", store: "Store settings", shipping: "Shipping", payments: "Payments", account: "Account" };
 const orderDate = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
 
 export function AdminDashboard() {
@@ -26,6 +28,7 @@ export function AdminDashboard() {
   const discounts = useQuery(api.admin.discounts);
   const batches = useQuery(api.admin.batches);
   const overview = useQuery(api.dashboard.overview);
+  const viewer = useQuery(api.adminAuth.viewer);
   const seed = useMutation(api.seed.run);
   const updateStatus = useMutation(api.orders.updateStatus);
 
@@ -34,13 +37,14 @@ export function AdminDashboard() {
   return <div className="admin-shell"><aside className={`admin-sidebar ${sidebar ? "is-open" : ""}`}><div className="admin-brand"><Image src="/assets/brand/blastbodyrx-wordmark.svg" width={234} height={38} alt="BlastBodyRx" /><span>OPERATIONS</span><button type="button" onClick={() => setSidebar(false)} aria-label="Close navigation"><X /></button></div><nav>{nav.map(([id, label, Icon]) => <button type="button" className={view === id ? "is-active" : ""} onClick={() => selectView(id)} key={id}><Icon />{label}<ChevronRight /></button>)}</nav><div className="admin-sidebar__foot"><Link href="/">View storefront</Link><span>Convex operational console</span></div></aside><div className="admin-overlay" onClick={() => setSidebar(false)} />
     <div className="admin-main"><header className="admin-topbar"><div><button type="button" className="admin-menu" onClick={() => setSidebar(true)}><Menu /></button><span>{currentLabel}</span></div><label><Search /><input placeholder="Search operations" /></label><div className="environment"><span /> BlastBodyRx Cloud</div><button type="button" className="admin-signout" onClick={() => void signOut()}>Sign out</button></header><main className="admin-content">
       {!products?.length && <section className="seed-banner"><div><ClipboardCheck /><span><strong>Initialize the BlastBodyRx catalogue</strong>Seed 12 products, 24 variants, store settings, and a starter discount.</span></div><button type="button" onClick={() => seed()}>Seed Convex data</button></section>}
-      {view === "overview" && <><div className="admin-heading"><div><span className="admin-kicker">Live operations</span><h1>Good afternoon, Dale.</h1><p>Here is what is happening across BlastBodyRx today.</p></div><button type="button" className="admin-primary" onClick={() => setView("orders")}>Review orders</button></div><div className="stat-grid">{[["Gross revenue", money(overview?.revenue || 0), "+12.4%", Activity], ["Orders", String(overview?.orders || 0), "All time", ShoppingCart], ["Customers", String(overview?.customers || 0), "Unique buyers", Users], ["Low stock", String(overview?.lowStock || 0), "Needs attention", PackageSearch]].map(([label, value, hint, Icon]) => <article key={String(label)}><div><span>{label as string}</span><Icon /></div><strong>{value as string}</strong><small>{hint as string}</small></article>)}</div><section className="admin-panel"><div className="panel-heading"><div><h2>Recent orders</h2><p>Latest customer activity across the store.</p></div><button type="button" onClick={() => setView("orders")}>View all</button></div><OrderTable orders={overview?.recentOrders || []} onStatus={updateStatus} /></section></>}
+      {view === "overview" && <><div className="admin-heading"><div><span className="admin-kicker">Live operations</span><h1>Good afternoon, {viewer?.name?.split(" ")[0] || "team"}.</h1><p>Here is what is happening across BlastBodyRx today.</p></div><button type="button" className="admin-primary" onClick={() => setView("orders")}>Review orders</button></div><div className="stat-grid">{[["Gross revenue", money(overview?.revenue || 0), "+12.4%", Activity], ["Orders", String(overview?.orders || 0), "All time", ShoppingCart], ["Customers", String(overview?.customers || 0), "Unique buyers", Users], ["Low stock", String(overview?.lowStock || 0), "Needs attention", PackageSearch]].map(([label, value, hint, Icon]) => <article key={String(label)}><div><span>{label as string}</span><Icon /></div><strong>{value as string}</strong><small>{hint as string}</small></article>)}</div><section className="admin-panel"><div className="panel-heading"><div><h2>Recent orders</h2><p>Latest customer activity across the store.</p></div><button type="button" onClick={() => setView("orders")}>View all</button></div><OrderTable orders={overview?.recentOrders || []} onStatus={updateStatus} /></section></>}
       {view === "products" && <ProductManager products={products || []} />}
       {view === "orders" && <section className="admin-panel"><div className="panel-heading"><div><h1>Orders</h1><p>Track payment, fulfillment, cancellations, and refunds.</p></div><span>{orders?.length || 0} total</span></div><OrderTable orders={orders || []} onStatus={updateStatus} /></section>}
       {view === "customers" && <section className="admin-panel"><div className="panel-heading"><div><h1>Customers</h1><p>Buyer history and lifetime value in one view.</p></div></div><div className="customer-grid">{customers?.map((customer) => <article key={customer._id}><div className="avatar">{customer.firstName[0]}{customer.lastName[0]}</div><div><strong>{customer.firstName} {customer.lastName}</strong><span>{customer.email}</span></div><div><strong>{customer.orderCount}</strong><span>orders</span></div><div><strong>{money(customer.lifetimeValue)}</strong><span>lifetime value</span></div></article>)}</div></section>}
       {view === "discounts" && <section className="admin-panel"><div className="panel-heading"><div><h1>Discounts</h1><p>Promotions with usage and availability controls.</p></div></div><div className="discount-grid">{discounts?.map((discount) => <article key={discount._id}><BadgePercent /><div><strong>{discount.code}</strong><span>{discount.type === "percent" ? `${discount.amount}% off` : `${money(discount.amount)} off`}</span></div><div><strong>{discount.usageCount}</strong><span>uses</span></div><b className={discount.active ? "status status--active" : "status"}>{discount.active ? "Active" : "Inactive"}</b></article>)}</div></section>}
       {view === "batches" && <section className="admin-panel"><div className="panel-heading"><div><h1>Batch certificates</h1><p>Publish searchable compound and lot documentation.</p></div><span>{batches?.length || 0} records</span></div>{!batches?.length ? <div className="admin-empty"><FlaskConical /><h3>No certificates yet</h3><p>Add lot records and hosted PDF links before publishing the library.</p></div> : <div>{batches.map((batch) => <article key={batch._id}>{batch.compound} {batch.lotNumber}</article>)}</div>}</section>}
-      {["designs","sections","branding","pages","store","shipping","payments","account"].includes(view) && <CommerceManager view={view} />}
+      {["designs","sections","branding","pages","store","shipping"].includes(view) && <CommerceManager view={view as CommerceView} />}
+      {view === "settings" && <SettingsManager />}
     </main></div>
   </div>;
 }
@@ -54,13 +58,14 @@ function ProductManager({ products }: { products: Array<Doc<"products">> }) {
   </section>;
 }
 
-function CommerceManager({ view }: { view: View }) {
+function CommerceManager({ view, embedded = false }: { view: CommerceView; embedded?: boolean }) {
   const state = useQuery(api.commerce.adminState); const saveDesign = useMutation(api.commerce.saveDesign); const saveSection = useMutation(api.commerce.saveSection); const savePage = useMutation(api.commerce.savePage); const saveStoreSettings = useMutation(api.commerce.saveStoreSettings); const saveShippingMethod = useMutation(api.commerce.saveShippingMethod); const savePaymentSettings = useMutation(api.commerce.savePaymentSettings); const saveAccount = useMutation(api.commerce.saveAccount);
   const [saved, setSaved] = useState(""); const settings = { storeName: "BlastBodyRx", legalName: "Ecom Blast LLC", supportEmail: "", supportPhone: "1-888-812-8690", storeTagline: "Documentation-first research supply", contactAddress: "", announcement: "Free U.S. shipping on qualifying $100+ research orders", minimumOrder: 100, freeShippingThreshold: 100, checkoutEnabled: false, currency: "USD", timezone: "America/New_York", metaTitle: "BlastBodyRx research compounds", metaDescription: "Documentation-first peptide research compounds.", logoUrl: "/assets/brand/blastbodyrx-wordmark.svg", darkLogoUrl: "", faviconUrl: "", ...state?.settings };
   const done = (message: string) => { setSaved(message); window.setTimeout(() => setSaved(""), 2600); };
   const saveStore = async (changes: Partial<typeof settings>) => { const next = { ...settings, ...changes }; await saveStoreSettings({ storeName: next.storeName, legalName: next.legalName, supportEmail: next.supportEmail, supportPhone: next.supportPhone, storeTagline: next.storeTagline, contactAddress: next.contactAddress, announcement: next.announcement, minimumOrder: Number(next.minimumOrder), freeShippingThreshold: Number(next.freeShippingThreshold), checkoutEnabled: Boolean(next.checkoutEnabled), currency: next.currency, timezone: next.timezone, metaTitle: next.metaTitle, metaDescription: next.metaDescription, logoUrl: next.logoUrl, darkLogoUrl: next.darkLogoUrl, faviconUrl: next.faviconUrl }); done("Storefront updated"); };
-  if (!state) return <section className="admin-panel"><div className="admin-empty">Loading commerce settings…</div></section>;
-  return <section className="admin-panel commerce-panel"><div className="panel-heading"><div><h1>{nav.find(([id]) => id === view)?.[1]}</h1><p>Changes publish to the connected storefront data model.</p></div>{saved && <span className="save-confirmation">✓ {saved}</span>}</div>
+  if (!state) return <section className={embedded ? "settings-pane" : "admin-panel"}><div className="admin-empty">Loading commerce settings…</div></section>;
+  return <section className={embedded ? "settings-pane commerce-panel" : "admin-panel commerce-panel"}>{!embedded && <div className="panel-heading"><div><h1>{commerceLabels[view]}</h1><p>Changes publish to the connected storefront data model.</p></div>{saved && <span className="save-confirmation">✓ {saved}</span>}</div>}
+    {embedded && saved && <div className="save-confirmation settings-save-confirmation">✓ {saved}</div>}
     {view === "designs" && <div className="theme-grid">{peptideThemes.map((theme) => <article className={state.design?.themeId === theme.id ? "is-selected" : ""} key={theme.id}><div className="theme-preview" style={{ background: `linear-gradient(145deg, ${theme.colors[2]} 55%, ${theme.colors[0]} 55%)` }}><i style={{ background: theme.colors[1] }} /><b style={{ color: theme.colors[3] }}>PEPTIDE<br />RESEARCH</b></div><h3>{theme.name}</h3><p>{theme.description}</p><div className="swatches">{theme.colors.map((color) => <span style={{ background: color }} key={color} />)}</div><button type="button" onClick={() => void saveDesign({ themeId: theme.id as PeptideThemeId, primaryColor: theme.colors[0], accentColor: theme.colors[1], surfaceColor: theme.colors[2], textColor: theme.colors[3], headingFont: "Manrope", bodyFont: "Manrope" }).then(() => done(`${theme.name} applied`))}>{state.design?.themeId === theme.id ? "Selected" : "Use this design"}</button></article>)}</div>}
     {view === "sections" && <div className="editor-list">{state.sections.map((section: { sectionId: string; type: "hero"|"featured"|"trust"|"categories"|"certificates"|"editorial"|"newsletter"; title: string; subtitle: string; enabled: boolean; sortOrder: number }) => <form key={section.sectionId} onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); void saveSection({ sectionId: section.sectionId, type: section.type, title: String(form.get("title")), subtitle: String(form.get("subtitle")), enabled: form.get("enabled") === "on", sortOrder: Number(form.get("sortOrder")) }).then(() => done("Section saved")); }}><div className="editor-list__head"><strong>{section.type}</strong><label><input name="enabled" type="checkbox" defaultChecked={section.enabled} /> Visible</label></div><label>Heading<input name="title" defaultValue={section.title} /></label><label>Description<textarea name="subtitle" defaultValue={section.subtitle} /></label><label>Position<input name="sortOrder" type="number" defaultValue={section.sortOrder} /></label><button type="submit">Save section</button></form>)}</div>}
     {view === "branding" && <form className="commerce-form" onSubmit={(event) => { event.preventDefault(); const f = new FormData(event.currentTarget); void saveStore({ storeName: String(f.get("storeName")), legalName: String(f.get("legalName")), storeTagline: String(f.get("storeTagline")), logoUrl: String(f.get("logoUrl")), darkLogoUrl: String(f.get("darkLogoUrl")), faviconUrl: String(f.get("faviconUrl")) }); }}><label>Store name<input name="storeName" defaultValue={settings.storeName} /></label><label>Legal business name<input name="legalName" defaultValue={settings.legalName} /></label><label className="full">Brand tagline<input name="storeTagline" defaultValue={settings.storeTagline} /></label><label className="full">Primary logo path or URL<input name="logoUrl" defaultValue={settings.logoUrl} /></label><label>Dark logo path or URL<input name="darkLogoUrl" defaultValue={settings.darkLogoUrl} /></label><label>Favicon path or URL<input name="faviconUrl" defaultValue={settings.faviconUrl} /></label><button type="submit">Save branding</button></form>}
@@ -70,6 +75,112 @@ function CommerceManager({ view }: { view: View }) {
     {view === "payments" && <form className="commerce-form" onSubmit={(event) => { event.preventDefault(); const f = new FormData(event.currentTarget); void savePaymentSettings({ provider: String(f.get("provider")) as "stripe"|"manual", currency: String(f.get("currency")), enabled: f.get("enabled") === "on", statementDescriptor: String(f.get("statementDescriptor")), checkoutMessage: String(f.get("checkoutMessage")) }).then(() => done("Payment settings saved")); }}><label>Provider<select name="provider" defaultValue={state.payment?.provider || "stripe"}><option value="stripe">Stripe Checkout</option><option value="manual">Manual payment</option></select></label><label>Currency<input name="currency" defaultValue={state.payment?.currency || "USD"} /></label><label>Statement descriptor<input name="statementDescriptor" defaultValue={state.payment?.statementDescriptor || "BLASTBODYRX"} /></label><label>Checkout message<input name="checkoutMessage" defaultValue={state.payment?.checkoutMessage || "Secure card payment"} /></label><label className="toggle"><input name="enabled" type="checkbox" defaultChecked={state.payment?.enabled || false} /> Payment provider is configured and ready</label><div className="integration-note"><CreditCard /><div><strong>Stripe server configuration</strong><p>Checkout requires STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, and ORDER_WRITE_SECRET in Vercel and Convex. Secrets are never shown in this console.</p></div></div><button type="submit">Save payment settings</button></form>}
     {view === "account" && <form className="commerce-form" onSubmit={(event) => { event.preventDefault(); const f = new FormData(event.currentTarget); void saveAccount({ displayName: String(f.get("displayName")), phone: String(f.get("phone")), emailNotifications: f.get("emailNotifications") === "on" }).then(() => done("Account updated")); }}><label>Display name<input name="displayName" defaultValue={state.admin?.displayName || state.user?.name || "Dale"} /></label><label>Phone<input name="phone" defaultValue={state.admin?.phone || ""} /></label><label className="full">Sign-in email<input value={state.user?.email || ""} disabled readOnly /></label><label className="toggle"><input name="emailNotifications" type="checkbox" defaultChecked={state.admin?.emailNotifications ?? true} /> Email me order and low-stock updates</label><button type="submit">Save account</button></form>}
   </section>;
+}
+
+type SettingsSection = "account" | "payments" | "admins" | "demo";
+const settingsSections: Array<[SettingsSection, string, typeof Settings]> = [
+  ["account", "Account", UserRound],
+  ["payments", "Payments", CreditCard],
+  ["admins", "Admin users", ShieldCheck],
+  ["demo", "Demo mode", Database],
+];
+
+function SettingsManager() {
+  const [section, setSection] = useState<SettingsSection>("account");
+  return <section className="admin-panel settings-hub">
+    <div className="panel-heading"><div><h1>Settings</h1><p>Manage your account, payments, administrator team, and sample store data.</p></div></div>
+    <div className="settings-layout">
+      <nav className="settings-nav" aria-label="Settings sections">{settingsSections.map(([id, label, Icon]) => <button type="button" className={section === id ? "is-active" : ""} onClick={() => setSection(id)} key={id}><Icon /><span>{label}</span><ChevronRight /></button>)}</nav>
+      <div className="settings-content">
+        {section === "account" && <><SettingsPaneHeading icon={UserRound} title="Account" description="Update the profile attached to your administrator sign-in." /><CommerceManager view="account" embedded /></>}
+        {section === "payments" && <><SettingsPaneHeading icon={CreditCard} title="Payments" description="Control checkout availability and the store's payment presentation." /><CommerceManager view="payments" embedded /></>}
+        {section === "admins" && <AdminUsersSettings />}
+        {section === "demo" && <DemoModeSettings />}
+      </div>
+    </div>
+  </section>;
+}
+
+function SettingsPaneHeading({ icon: Icon, title, description }: { icon: typeof Settings; title: string; description: string }) {
+  return <div className="settings-pane-heading"><span><Icon /></span><div><h2>{title}</h2><p>{description}</p></div></div>;
+}
+
+function AdminUsersSettings() {
+  const team = useQuery(api.adminAuth.listAdminUsers);
+  const inviteAdmin = useMutation(api.adminAuth.inviteAdmin);
+  const revokeAdmin = useMutation(api.adminAuth.revokeAdmin);
+  const cancelInvitation = useMutation(api.adminAuth.cancelInvitation);
+  const [notice, setNotice] = useState("");
+  const [error, setError] = useState("");
+  const [inviteLink, setInviteLink] = useState("");
+  const [working, setWorking] = useState(false);
+
+  async function invite(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    setWorking(true); setNotice(""); setError(""); setInviteLink("");
+    try {
+      const result = await inviteAdmin({ email: String(data.get("email")) });
+      setNotice(result.message);
+      if (result.invitationId) setInviteLink(`${window.location.origin}/admin?invite=${result.invitationId}`);
+      form.reset();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "The administrator could not be added");
+    } finally { setWorking(false); }
+  }
+
+  async function removeAdmin(adminId: Id<"adminUsers">, name: string) {
+    if (!window.confirm(`Remove administrator access for ${name}?`)) return;
+    setNotice(""); setError("");
+    try { await revokeAdmin({ adminId }); setNotice(`${name} no longer has administrator access.`); }
+    catch (caught) { setError(caught instanceof Error ? caught.message : "Administrator access could not be removed"); }
+  }
+
+  return <div className="settings-pane">
+    <SettingsPaneHeading icon={ShieldCheck} title="Admin users" description="Add multiple administrators now. Detailed roles and permissions can be layered in later." />
+    <form className="admin-invite-form" onSubmit={invite}><label><span>Administrator email</span><input name="email" type="email" placeholder="teammate@company.com" required /></label><button type="submit" disabled={working}><UserPlus />{working ? "Adding…" : "Add administrator"}</button></form>
+    <div className="settings-help"><CheckCircle2 /><p>If the email already has a BlastBodyRx account, access starts immediately. Otherwise, share the secure invitation link so that person can create an account and activate access.</p></div>
+    {notice && <div className="settings-notice settings-notice--success">{notice}</div>}
+    {inviteLink && <div className="invite-link"><label><span>Secure invitation link</span><input value={inviteLink} readOnly /></label><button type="button" onClick={() => void navigator.clipboard.writeText(inviteLink).then(() => setNotice("Invitation link copied."))}><ClipboardCheck />Copy link</button></div>}
+    {error && <div className="settings-notice settings-notice--error" role="alert">{error}</div>}
+    <div className="admin-user-list">
+      <div className="settings-list-heading"><h3>Active administrators</h3><span>{team?.admins.length ?? 0}</span></div>
+      {!team && <div className="settings-loading">Loading administrator team…</div>}
+      {team?.admins.map((admin) => <article key={admin.adminId}><div className="admin-user-avatar">{admin.name.slice(0, 2).toUpperCase()}</div><div><strong>{admin.name}</strong><span>{admin.email}</span></div><div className="admin-role"><b>{admin.role}</b>{admin.isCurrent && <span>You</span>}</div>{admin.role !== "owner" && !admin.isCurrent ? <button type="button" className="danger-icon" aria-label={`Remove ${admin.name}`} onClick={() => void removeAdmin(admin.adminId, admin.name)}><Trash2 /></button> : <span className="protected-account">Protected</span>}</article>)}
+    </div>
+    {!!team?.invitations.length && <div className="admin-user-list pending-invites"><div className="settings-list-heading"><h3>Pending invitations</h3><span>{team.invitations.length}</span></div>{team.invitations.map((invitation) => <article key={invitation.invitationId}><div className="admin-user-avatar is-pending"><UserPlus /></div><div><strong>{invitation.email}</strong><span>Invited {orderDate.format(invitation.createdAt)}</span></div><div className="admin-role"><b>Pending</b></div><div className="invite-actions"><button type="button" className="copy-invite" aria-label={`Copy invitation for ${invitation.email}`} onClick={() => void navigator.clipboard.writeText(`${window.location.origin}/admin?invite=${invitation.invitationId}`).then(() => setNotice("Invitation link copied."))}><ClipboardCheck /></button><button type="button" className="danger-icon" aria-label={`Cancel invitation for ${invitation.email}`} onClick={() => void cancelInvitation({ invitationId: invitation.invitationId })}><X /></button></div></article>)}</div>}
+  </div>;
+}
+
+function DemoModeSettings() {
+  const state = useQuery(api.seed.demoState);
+  const setDemoMode = useMutation(api.seed.setDemoMode);
+  const [working, setWorking] = useState(false);
+  const [notice, setNotice] = useState("");
+  const [error, setError] = useState("");
+
+  async function toggle(enabled: boolean) {
+    if (!enabled && !window.confirm("Turn off Demo Mode and remove its generated customers, orders, discounts, and batch records? Your product catalog and real data will remain untouched.")) return;
+    setWorking(true); setNotice(""); setError("");
+    try {
+      await setDemoMode({ enabled });
+      setNotice(enabled ? "Demo Mode is active and the sample store data is ready." : "Demo Mode data was removed. Products and real store data were preserved.");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Demo Mode could not be updated");
+    } finally { setWorking(false); }
+  }
+
+  const counts = state?.counts;
+  const countCards: Array<[string, number, string, typeof Boxes]> = [["Products", counts?.products ?? 0, "Current catalog retained", Boxes], ["Customers", counts?.customers ?? 0, "Generated profiles", Users], ["Orders", counts?.orders ?? 0, "Mixed order statuses", ShoppingCart], ["Discounts", counts?.discounts ?? 0, "Sample promotions", BadgePercent], ["Batch records", counts?.batches ?? 0, "Published documentation", FlaskConical]];
+  return <div className="settings-pane demo-settings">
+    <SettingsPaneHeading icon={Database} title="Demo mode" description="Populate the back office with realistic sample commerce activity without replacing the current product catalog." />
+    <div className={`demo-status-card ${state?.enabled ? "is-active" : ""}`}><div><span className="demo-status-icon"><Database /></span><div><span className="admin-kicker">Store data environment</span><h3>{state?.enabled ? "Demo Mode is active" : "Demo Mode is off"}</h3><p>{state?.enabled ? "Sample activity is visible throughout Dashboard, Orders, Customers, Discounts, and Batch certificates." : "Enable it whenever you want a fully populated store for demonstrations or training."}</p></div></div><button type="button" disabled={working || !state} onClick={() => void toggle(!state?.enabled)}>{working ? "Updating…" : state?.enabled ? "Turn off Demo Mode" : "Populate demo data"}</button></div>
+    <div className="demo-count-grid">{countCards.map(([label, count, hint, Icon]) => <article key={label}><Icon /><div><strong>{count}</strong><span>{label}</span><small>{hint}</small></div></article>)}</div>
+    <div className="settings-help settings-help--blue"><ShieldCheck /><p>Demo records are tagged separately. Turning Demo Mode off removes only generated demo data; existing products, real customers, real orders, and configuration stay in place.</p></div>
+    {notice && <div className="settings-notice settings-notice--success">{notice}</div>}
+    {error && <div className="settings-notice settings-notice--error" role="alert">{error}</div>}
+  </div>;
 }
 
 type OrderStatus = Doc<"orders">["status"];

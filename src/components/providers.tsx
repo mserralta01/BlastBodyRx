@@ -11,6 +11,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return url ? new ConvexReactClient(url) : null;
   }, []);
 
+  if (!client) {
+    return <main className="configuration-missing"><div><strong>BlastBodyRx</strong><h1>Store services are not connected.</h1><p>This environment needs a Convex deployment URL before the storefront and Operations workspace can load.</p></div></main>;
+  }
+
   const content = <CartProvider>{children}</CartProvider>;
-  return client ? <ConvexAuthProvider client={client}>{content}</ConvexAuthProvider> : content;
+  return <ConvexAuthProvider client={client}>{content}</ConvexAuthProvider>;
 }
